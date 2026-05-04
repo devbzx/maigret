@@ -1,0 +1,43 @@
+name: Run Maigret for account
+
+on:
+  workflow_dispatch:
+    inputs:
+      account:
+        description: "Account/username to search"
+        required: true
+        type: string
+
+jobs:
+  run-maigret:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libcairo2-dev
+
+      - name: Install Maigret
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install .
+
+      - name: Run Maigret
+        run: |
+          mkdir -p results
+          maigret "${{ inputs.account }}" --json results/report.json --txt results/report.txt
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: maigret-results-${{ inputs.account }}
+          path: results/
