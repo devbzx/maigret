@@ -34,7 +34,7 @@ jobs:
       - name: Run Maigret
         run: |
           mkdir -p results
-          maigret "${{ inputs.account }}" --json results/report.json --txt results/report.txt
+          maigret "${{ inputs.account }}" --folderoutput results --json simple --txt
 
       - name: Upload results
         uses: actions/upload-artifact@v4
